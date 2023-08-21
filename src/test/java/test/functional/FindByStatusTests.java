@@ -1,11 +1,9 @@
 package test.functional;
 
 import io.restassured.http.ContentType;
-import io.restassured.response.Response;
 import org.testng.annotations.Test;
 
 import static io.restassured.RestAssured.*;
-import static io.restassured.matcher.RestAssuredMatchers.*;
 import static org.hamcrest.Matchers.*;
 
 public class FindByStatusTests {
@@ -35,11 +33,11 @@ public class FindByStatusTests {
     @Test
     public void searchPetsMatchingAllStatuses() {
         /*
-        Note: This test case is just a skeleton. I would some more time to figure out how to deal with an array of JSON
+        Note: This test case is just a skeleton. I would need some more time to figure out how to deal with an array of JSON
         objects that can have different status values.
 
         Suggested solution: extract response and use JsonPath (which I've added as dependency) to traverse the array and
-        check statues.
+        check statuses.
          */
         given().
                 baseUri(BASE_URI).
