@@ -19,7 +19,7 @@ public class UploadImageTests {
     /*
     NOTE: It looks like Swagger API simply accepts the file and doesn't do many further validations,
     i.e. it doesn't check if the petId already exists. So you can upload the files multiple times
-    to your heart's content while using random IDs at the same time. It only seems to care about ID format (it must be Integer)
+    to your heart's content while using random IDs at the same time. It only seems to care about ID format (it must be long integer)
      */
     @BeforeClass
     public void setUp() {
