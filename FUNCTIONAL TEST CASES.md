@@ -19,24 +19,28 @@ Job candidate: Piotr Szczepaniak
 - check the server response
 ##### Expected results:
 - Server returns 200 OK for the ```POST``` request
+- response is of JSON type
 - response body contains name and size of  the uploaded file 
 
 ***
 
 #### Case 2: Upload valid image for a non-existing ```petId```
+This is a theoretical test case, in reality the example API doesn't care about existing `petId`
 ##### Preconditions:
 - valid image file (i.e. supported format & size) is available
 - no additional metadata provided
 ##### Steps:
-- trigger ```POST``` request with an invalid (non-existing) ```petId``` as the path parameter and valid image file attached as form data
+- trigger ```POST``` request with a non-existing ```petId``` as the path parameter and valid image file attached as form data
 - check the server response
 ##### Expected results:
 - Server returns error code 400
+- response is of JSON type
 - response body ideally contains a short descriptive error message, i.e. *invalid petId* or something similar
 
 ***
 
 #### Case 3: Upload invalid image for an existing ```petId```
+This is another theoretical test case - the example API doesn't care about image file validation
 ##### Preconditions:
 - there is an existing pet in the petstore
 - invalid image file (i.e. unsupported format or too big file size) is available
@@ -45,6 +49,7 @@ Job candidate: Piotr Szczepaniak
 - trigger ```POST``` request with a valid ```petId``` as the path parameter and invalid image file attached as form data
 - check the server response
 ##### Expected results:
+- response is of JSON type
 - Server returns error code, most likely `413 -  Content Too large if file is too big` or `415 - Unsupported media type` if file type is not supported
 - Response body ideally contains a short descriptive error message explaining why the file was not accepted
 
@@ -57,6 +62,7 @@ Job candidate: Piotr Szczepaniak
 - trigger ```POST``` request with a valid ```petId``` as the path parameter and empty form data
 - check the server response
 ##### Expected results:
+- response is of JSON type
 - Server returns error code 400
 - response body ideally contains a short descriptive error message, i.e. *missing petId and image file* or something similar
 
@@ -71,6 +77,7 @@ Job candidate: Piotr Szczepaniak
 - trigger ```POST``` request with a valid ```petId``` as the path parameter plus metadata string and valid image file attached as form data
 - check the server response
 ##### Expected results:
+- response is of JSON type
 - Server returns 200 OK for the ```POST``` request
 - response body contains metadata string as well as name and size of  the uploaded file
 
@@ -84,23 +91,16 @@ Job candidate: Piotr Szczepaniak
 ##### Steps:
 - trigger ```POST``` request with a valid ```petId``` as the path parameter and valid image file attached as form data
 - check the server response
-- trigger ```GET``` requests with the petID
-- check the server response again
 ##### Expected results:
-For the ```POST``` request
+- response is of JSON type
 - Server returns 200 OK for the ```POST``` request
 - response body contains name and size of the newly uploaded file
-
-For the ```GET``` request
-- Server returns 200 OK
-- In the response JSON both image urls are listed in the ```photoUrls``` array
 
 *** 
 
 ##### Additional scenarios to consider:
-1. **Action**: Upload the same image file twice. **Expected**: no duplicated `photoUrls` added to the pet data.
-2. **Action**: Upload multiple image files for the same `petId`. **Expected**: the API probably should have a limit on the number of image uploads for a single pet item. Once the limit is reached either: an error is returned **OR** the oldest image link is replaced with the most recent upload
-3. **Action**: Test various formats of `petId` (valid and invalid ones). **Expected**: Invalid petId parameters (i.e. not conforming to required length / format) should ideally trigger error response from the server, like `400 - Invalid petId parameter` 
+1. **Action**: Upload multiple image files for the same `petId`. **Expected**: the API probably should have a limit on the number of image uploads for a single pet item. Once the limit is reached either: an error is returned **OR** the oldest image link is replaced with the most recent upload
+2. **Action**: Test various formats of `petId` (valid and invalid ones). **Expected**: Invalid petId parameters (i.e. not conforming to required length / format) should ideally trigger error response from the server, like `400 - Invalid petId parameter` 
 
 ***
 
@@ -136,6 +136,7 @@ For the ```GET``` request
 ***
 
 #### Case 3: Add a pet for an existing `petId`
+Note: it looks like the example API simply replaces the previous entry with the new one. So this case is a theoretical one.
 ##### Preconditions:
 - the petId already exists
 - JSON payload for this request contains at least the minimum required information (`name` and one image link)
@@ -198,6 +199,7 @@ For the ```GET``` request
 ***
 
 #### Case 3: Search for pets with non-existing status value
+Note: it looks that the API accepts anything and if there's no match it will simply return an empty array.
 ##### Preconditions:
 - status name is neither _available_ nor _pending_ nor _sold_
 ##### Steps
@@ -214,9 +216,8 @@ For the ```GET``` request
 ##### Steps:
 - Perform `GET` request with both statuses in the query string array
 ##### Expected results:
-- Server returns `400 - Invalid status value`
-##### Additional considerations:
-- API could be tweaked to ignore unsupported categories in such cases and only return data if there is a match
+- Server returns `200 - OK`
+- List (array of JSON objects) is returned only for all the pets that match supported status value(s). Invalid entries are ignored.
 
 ***
 
