@@ -1,6 +1,7 @@
 package test.functional;
 
 import io.restassured.http.ContentType;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import static io.restassured.RestAssured.*;
@@ -11,18 +12,27 @@ public class FindByStatusTests {
     private final String BASE_URI = "https://petstore.swagger.io/v2";
     private final String FIND_BY_STATUS_PATH = "/pet/findByStatus";
 
+    @DataProvider
+    public Object[][] provideStatusValues() {
+        return new Object[][]{
+                {"available"},
+                {"sold"},
+                {"pending"}
+        };
+    }
 
-    @Test
-    public void searchPetsMatchingSingleStatus() {
+    @Test(dataProvider = "provideStatusValues")
+    public void searchPetsMatchingSingleStatus(String statusValue) {
+        // Using data provider to check each possible status value
         given().
                 baseUri(BASE_URI).
-                queryParam("status", "available").
+                queryParam("status", statusValue).
         when().
                 get(FIND_BY_STATUS_PATH).
         then().
                 statusCode(200).
                 contentType(ContentType.JSON).
-                body("status", everyItem(equalTo("available")));
+                body("status", everyItem(equalTo(statusValue)));
     }
 
     @Test(enabled = false) // disabled for now because Swagger API doesn't return all categories, only the first one. Bug?

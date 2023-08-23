@@ -22,7 +22,6 @@ import static org.hamcrest.Matchers.*;
 public class AddNewPetTests {
 
     private final String BASE_URI = "https://petstore.swagger.io/v2";
-    private String faultyJsonString;
     private MinimalPet minimalPet;
     private FullyFeaturedPet fullyFeaturedPet;
     private long existingPetId;
@@ -120,7 +119,7 @@ public class AddNewPetTests {
     public void addPetWithValidAndInvalidData() {
         // I cannot re-use POJO here as it will fail type checking if I try to set some fields to incorrect types
         // so for this case I will use a "faulty" JSON file and post it to the server
-        faultyJsonString = fetchFaultyJson();
+        String faultyJsonString = fetchFaultyJson();
         given().
                 baseUri(BASE_URI).
                 contentType(ContentType.JSON).
