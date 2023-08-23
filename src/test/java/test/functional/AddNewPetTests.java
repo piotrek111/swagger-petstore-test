@@ -2,8 +2,6 @@ package test.functional;
 
 import io.restassured.http.ContentType;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeGroups;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 import shared.pojos.Category;
 import shared.pojos.FullyFeaturedPet;
@@ -17,13 +15,13 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import static io.restassured.RestAssured.*;
+import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
 
 
 public class AddNewPetTests {
 
-    private String BASE_URI = "https://petstore.swagger.io/v2";
+    private final String BASE_URI = "https://petstore.swagger.io/v2";
     private String faultyJsonString;
     private MinimalPet minimalPet;
     private FullyFeaturedPet fullyFeaturedPet;
@@ -118,19 +116,11 @@ public class AddNewPetTests {
                 body("status", is(equalTo("sold")));
     }
 
-    @BeforeClass
-    public void fetchFaultyJson() {
-        Path path = Paths.get("src/main/resources/json/faulty-json.pet.json");
-        try {
-            faultyJsonString = Files.readString(path);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
     @Test(priority = 3)
     public void addPetWithValidAndInvalidData() {
         // I cannot re-use POJO here as it will fail type checking if I try to set some fields to incorrect types
         // so for this case I will use a "faulty" JSON file and post it to the server
+        faultyJsonString = fetchFaultyJson();
         given().
                 baseUri(BASE_URI).
                 contentType(ContentType.JSON).
@@ -140,6 +130,17 @@ public class AddNewPetTests {
         then().
                 statusCode(500).
                 contentType(ContentType.JSON);
+    }
+
+    private String fetchFaultyJson() {
+        Path path = Paths.get("src/main/resources/json/faulty-json.pet.json");
+        String jsonString = "";
+        try {
+            jsonString = Files.readString(path);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return jsonString;
     }
 
 }
