@@ -15,6 +15,7 @@ public class UploadImageTests {
     private final String dogImagePath = "src/main/resources/images/dogo.png";
     private final String dogImageSize = "1155141 bytes";
     private final String catImagePath = "src/main/resources/images/kitty.jpg";
+    private final String invalidImagePath = "src/main/resources/images/invalid/invalid-image-file.psocache";
     private final String catImageSize = "236878 bytes";
     /*
     NOTE: It looks like Swagger API simply accepts the file and doesn't do many further validations,
@@ -73,6 +74,20 @@ public class UploadImageTests {
                 body("code", is(equalTo(200))).
                 body("message", containsString(metadataString)).
                 body("message", containsString("dogo.png"));
+    }
+    @Test(enabled = false)
+    public void uploadInvalidImageFile() {
+        // This one is also disabled as the actual API doesn't validate attached files
+        given().
+                baseUri(BASE_URI).
+                multiPart("file", new File(invalidImagePath)).
+        when().
+                post("/pet/12345/uploadImage").
+        then().
+                log().all().
+                statusCode(415).
+                contentType(ContentType.JSON).
+                body("code", is(equalTo(415)));
     }
 
     /*
