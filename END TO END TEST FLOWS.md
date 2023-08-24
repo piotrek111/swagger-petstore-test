@@ -5,9 +5,7 @@ Job candidate: Piotr Szczepaniak
 
 #### Preface
 
-Since the Swagger API chosen for this assignment mimics a pet store it would be a good idea to cover some `end-to-end` test flows that combine multiple operations as they would happen in real life situation.
-
-This is also a good opportunity to discuss one of the advantages of using **TestNG** as a test framework instead of good old **JUnit**: with **TestNG** it is possible to create explicit dependency between two or more testcase by adding `dependsOnMethod` to the `@Test` annotation (which I will later demonstrate in the actual project code).
+Since the Swagger API chosen for this assignment mimics a pet store it would be a good idea to cover some `end-to-end` test flows that combine multiple operations as they would happen in real life situation. These are a couple of proposed end-to-end scenarios.
 
 
 ### Create - Update - Delete flow
