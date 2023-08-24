@@ -40,7 +40,6 @@ This is a theoretical test case, in reality the example API doesn't care about e
 ***
 
 #### Case 3: Upload invalid image for an existing ```petId```
-This is another theoretical test case - the example API doesn't care about image file validation
 ##### Preconditions:
 - there is an existing pet in the petstore
 - invalid image file (i.e. unsupported format or too big file size) is available
@@ -50,8 +49,7 @@ This is another theoretical test case - the example API doesn't care about image
 - check the server response
 ##### Expected results:
 - response is of JSON type
-- Server returns error code, most likely `413 -  Content Too large if file is too big` or `415 - Unsupported media type` if file type is not supported
-- Response body ideally contains a short descriptive error message explaining why the file was not accepted
+- Server returns  `415 - Unsupported media type` if file type is not supported
 
 ***
 
@@ -65,6 +63,8 @@ This is another theoretical test case - the example API doesn't care about image
 - response is of JSON type
 - Server returns error code 400
 - response body ideally contains a short descriptive error message, i.e. *missing petId and image file* or something similar
+##### Additional notes:
+- We actually get `415 - Unsupported Media Type` which is not exactly correct (we haven't provided any attachment at all)
 
 ***
 
@@ -113,13 +113,13 @@ This is another theoretical test case - the example API doesn't care about image
 
 #### Case 1: Add a new pet with minimum required parameters (_name_ and one _image link_ available)
 ##### Preconditions:
-- `petId` for this request hasn't been used before (i.e. there's no existing pet with this id)
 - JSON payload for the request has only `name` and a single url string in `photoUrls` array
 ##### Steps:
 - Perform POST request with specified petId and JSON payload
 ##### Expected results:
 - Server returns 200 - OK
-- response body contains JSON payload with the supplied values for `petId`, `name` and image url
+- response body contains JSON payload with the supplied values for `name` and image url
+- auto-generated `id` value conforms to the requirement (it's a long integer)
 
 ***
 
@@ -146,7 +146,7 @@ Note: it looks like the example API simply replaces the previous entry with the 
 - Server return `405 - Invalid input` (?)
 - Response contains rejected JSON payload with error information (?)
 ##### Additional notes:
-- For this particular test case it's not clear from just reading Swagger examples what should be the error message. I would expect a custom message like `petId already in use` or something similar  
+- For this particular test case it's not clear from just reading Swagger examples what should be the error message. I would expect a custom message like `petId already in use` or something similar
 
 ***
 
@@ -160,7 +160,7 @@ Note: it looks like the example API simply replaces the previous entry with the 
 ##### Expected:
 - Server return `405 - Invalid input`
 ##### Additional notes:
-- Ideally, the response payload should indicate the error in a more specific way, i.e. `Invalid category id. Must be a positive integer`.
+- Ideally, the response payload should indicate the error in a more specific way, i.e. `Invalid category id. Must be a positive integer`. What actually happens is that we get parsing error(s) and the server ends up returing `500 - Internal Server Error`. That is not very helpful from a requesting client's side.
 
 ***
 
@@ -183,7 +183,7 @@ Note: it looks like the example API simply replaces the previous entry with the 
 - Server returns `200 - OK`
 - List (array of JSON objects) is returned for all the pets that exist with this status
 ##### Additional notes:
-- Ideally, this test case could be executed three times for each supported category (_available_, _pending_, _sold_)
+- Ideally, this test case should be executed three times for each supported category (_available_, _pending_, _sold_)
 
 ***
 
@@ -206,6 +206,8 @@ Note: it looks that the API accepts anything and if there's no match it will sim
 - Perform `GET` request with a single, unsupported status (i.e. _missing_)
 ##### Expected results:
 - Server returns `400 - Invalid status value`
+##### Additional notes:
+- It looks like Swagger API doesn't really validate if the status string is valid / supported or not. It simply returns `200 - OK` and an empty result list.
 
 ***
 
@@ -233,10 +235,8 @@ Note: it looks that the API accepts anything and if there's no match it will sim
 - there is an existing pet in the petstore
 ##### Steps:
 - perform DELETE request with the existing `petId` specified as path parameter
-- follow up with a GET request for the previously deleted `petId`
 ##### Expected results:
 - Server returns `200 - OK` for the `DELETE` request
-- Server returns `404 - Not found` for the `GET` request
 
 ***
 
@@ -254,3 +254,5 @@ Note: it looks that the API accepts anything and if there's no match it will sim
 - the petId used in the request doesn't conform to the expected length / format
 ##### Expected results:
 - Server returns `400 - Bad request`
+##### Additional notes:
+- It looks like Swagger api return `404 - Not found` (which makes sense as it cannot find a pet with that id). At the same time parsing of invalid `petId` throws a Java error so we end up with somewhat of a mixed state - API cannot find the requested pet but also fails at parsing the invalid id value and doesn't report why the parsing failed.
