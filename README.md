@@ -18,7 +18,7 @@ I didn't include *Cucumber* because I haven't personally worked with it. `RestAs
 
 ## Room for improvement
 
-The solution has potential for more improvement. There's some code duplication (I was thinking about moving some shared items like the BASE URI to a config class what would be shared by all test cases). Another option would be to use RequestSpec builder and then add / modify elements of the request depending on the test case. I am also using one helper method to load Json file - that should ideally be moved to a shared "utils" class I guess. I also ended up with some tight coupling between api requests and expected data in the assertions.
+The solution has potential for more improvement. There's some code duplication (I was thinking about moving some shared items like the BASE URI to a config class that would be shared by all test cases). Another option would be to use RequestSpec builder and then add / modify elements of the request depending on the test case. I am also using one helper method to load Json file - that should ideally be moved to a shared "utils" class I guess. I also ended up with some tight coupling between api requests and expected data in the assertions.
 
-All in all I decided to finish at this point and share the solution. I hope that I have demonstrated enough practical knowledge of Java and RestAssured / TestNG.
+All in all I decided to finish at this point as I am approaching the suggested deadline and share the solution. I hope that I have demonstrated enough practical knowledge of Java and RestAssured / TestNG.
 
